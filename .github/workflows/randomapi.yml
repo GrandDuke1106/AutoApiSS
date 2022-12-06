@@ -1,0 +1,38 @@
+#更新api排序
+name: update randapi
+
+on: 
+  release:
+    types: [published]
+  push:
+    tags:
+    - 'v*'
+  #  branches: 
+  #    - master
+  schedule:
+    - cron: '50 5 * * 1,3,5'
+  workflow_dispatch:
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Set up Python #安装python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+    - name: Update randapi #更新api排序
+      run: | 
+        python updaterand.py
+    - name: Commit #上传新的排序到仓库
+      run: |
+        git config --global user.email AutoupdateRobot@email.com
+        git config --global user.name AutoupdateRobot
+        git add .
+        git commit -m "update new randapi" -a
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}

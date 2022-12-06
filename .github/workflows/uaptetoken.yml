@@ -1,0 +1,65 @@
+#更新refresh_token
+name: update refresh_token
+
+on: 
+  release:
+    types: [published]
+  push:
+    tags:
+    - 'v*'
+  #  branches: 
+  #    - master
+  schedule:
+    - cron: '45 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Set up Python #安装python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+    - name: Install requests #安装requests
+      run: |
+        pip install requests
+    - name: Read config from secrets  #读取机密
+      env: 
+        ID_LIST: ${{ secrets.ID_LIST }} # secrets_id 提供
+        KEY_LIST: ${{ secrets.KEY_LIST }} # secrets_key 提供
+        ID_LIST2: ${{ secrets.ID_LIST2 }} # secrets_id 提供
+        KEY_LIST2: ${{ secrets.KEY_LIST2 }} # secrets_key 提供
+      run: | 
+        cp updatetoken.py updatetoken2.py
+        echo $ID_LIST > idlist.txt
+        echo $KEY_LIST > keylist.txt
+        sed -i '10 r idlist.txt' updatetoken2.py
+        sed -i '11 r keylist.txt' updatetoken2.py
+        echo $ID_LIST2 > idlist2.txt
+        echo $KEY_LIST2 > keylist2.txt
+        sed -i '12 r idlist2.txt' updatetoken2.py
+        sed -i '13 r keylist2.txt' updatetoken2.py
+    - name: Update token #更新token
+      run: | 
+        python updatetoken2.py
+    - name: Delete secrets config #删除机密
+      run: | 
+        rm -f updatetoken2.py
+        rm -f idlist.txt
+        rm -f keylist.txt
+        rm -f idlist2.txt
+        rm -f keylist2.txt
+    - name: Commit #上传新的refresh_token到仓库
+      run: |
+        git config --global user.email AutoupdateRobot@email.com
+        git config --global user.name AutoupdateRobot
+        git add .
+        git commit -m "update new refresh_token" -a
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
