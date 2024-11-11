@@ -2,6 +2,8 @@
 
 AutoApi系列：AutoApi、AutoApiSecret、AutoApiSR、AutoApiS
 
+### **新教程请看仓库目录的[README_NEW.md](README_NEW.md)**
+
 # 置顶 #
 * 本项目是建立在[原教程](https://blog.432100.xyz/index.php/archives/50/)可以正确调用api的**假设**上的，核心是paran/黑幕大佬的py脚本。
 * 本项目只是提供一个自动、免费、无需额外设备的脚本运行方式，换句话说，**借用github的电脑/服务器来干活**。（因为原教程需要服务器/超长时间运转的设备，大部分人都不具备，本项目应运而生）
